@@ -22,6 +22,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 		PasscodeKit.delegate = self
 		PasscodeKit.start()
+        
+        PasscodeKit.navigationBarColor = .green
+        PasscodeKit.navigationTitleColor = .white
+        PasscodeKit.navigationBarTintColor = .orange
+        PasscodeKit.statusBarStyle = .darkContent
 
 		window = UIWindow(frame: UIScreen.main.bounds)
 

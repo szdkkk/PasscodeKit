@@ -25,6 +25,10 @@ class PasscodeKitVerify: UIViewController {
 	var delegate: PasscodeKitDelegate?
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return PasscodeKit.statusBarStyle
+    }
+    
 	override func viewDidLoad() {
 
 		super.viewDidLoad()

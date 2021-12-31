@@ -38,6 +38,10 @@ class PasscodeKitChange: UIViewController {
 	var delegate: PasscodeKitDelegate?
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return PasscodeKit.statusBarStyle
+    }
+    
 	override func viewDidLoad() {
 
 		super.viewDidLoad()
@@ -60,7 +64,9 @@ class PasscodeKitChange: UIViewController {
 	//-------------------------------------------------------------------------------------------------------------------------------------------
 	@objc private func actionCancel() {
 
-		dismiss(animated: true)
+        dismiss(animated: true) { [weak self] in
+            self?.delegate?.passcodeCancelled?(.change)
+        }
 	}
 }
 

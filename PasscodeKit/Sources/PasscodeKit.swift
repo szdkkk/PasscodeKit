@@ -22,6 +22,13 @@ import CryptoKit
 	@objc optional func passcodeCheckedButDisabled()
 	@objc optional func passcodeEnteredSuccessfully()
 	@objc optional func passcodeMaximumFailedAttempts()
+    @objc optional func passcodeCancelled(_ actionType: PasscodeActionType)
+}
+
+@objc public enum PasscodeActionType: Int {
+    case creation
+    case change
+    case remove
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -34,6 +41,12 @@ public class PasscodeKit: NSObject {
 
 	public static var passcodeLength			= 4
 	public static var allowedFailedAttempts		= 3
+    
+    public static var statusBarStyle            = UIStatusBarStyle.lightContent
+    
+    public static var navigationBarColor        = UIColor.white
+    public static var navigationBarTintColor    = UIColor.systemBlue
+    public static var navigationTitleColor      = UIColor.darkText
 
 	public static var textColor					= UIColor.darkText
 	public static var backgroundColor			= UIColor.lightGray
@@ -147,13 +160,7 @@ extension PasscodeKit {
 	//-------------------------------------------------------------------------------------------------------------------------------------------
 	private func topViewController() -> UIViewController? {
 
-		var keyWindow: UIWindow?
-
-		if #available(iOS 13.0, *) {
-			keyWindow = UIApplication.shared.windows.first { $0.isKeyWindow }
-		} else {
-			keyWindow = UIApplication.shared.keyWindow
-		}
+        let keyWindow: UIWindow? = UIApplication.shared.windows.first { $0.isKeyWindow }
 
 		var viewController = keyWindow?.rootViewController
 		while (viewController?.presentedViewController != nil) {
@@ -264,12 +271,19 @@ class PasscodeKitNavController: UINavigationController {
 
 		super.viewDidLoad()
 
-		if #available(iOS 13.0, *) {
-			self.isModalInPresentation = true
-			self.modalPresentationStyle = .fullScreen
-		}
-
-		navigationBar.isTranslucent = false
+        self.isModalInPresentation = true
+        self.modalPresentationStyle = .fullScreen
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = PasscodeKit.navigationBarColor
+        appearance.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 16, weight: .semibold),
+            .foregroundColor: PasscodeKit.navigationTitleColor
+        ]
+        navigationBar.standardAppearance = appearance
+        navigationBar.scrollEdgeAppearance = appearance
+        navigationBar.isTranslucent = false
+        navigationBar.tintColor = PasscodeKit.navigationBarTintColor
 	}
 
 	//-------------------------------------------------------------------------------------------------------------------------------------------
@@ -289,4 +303,12 @@ class PasscodeKitNavController: UINavigationController {
 
 		return false
 	}
+    
+    override var childForStatusBarStyle: UIViewController? {
+        return self.topViewController
+    }
+    
+    override var childForStatusBarHidden: UIViewController? {
+        return self.topViewController
+    }
 }
